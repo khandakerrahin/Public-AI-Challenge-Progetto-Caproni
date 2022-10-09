@@ -7,7 +7,7 @@ Starting from two folders, it is going to create crops of images. According to t
   (Images like ![this](https://github.com/khandakerrahin/Public-AI-Challenge-Progetto-Caproni/tree/main/images/black_damage.jpg?raw=true) should be put in black_noise)
 
 * white_noise: In the images here, the **white part** of the image is taken as damage, the rest is made invisible.
-  (Images like ![this](https://github.com/khandakerrahin/Public-AI-Challenge-Progetto-Caproni/tree/main/images/white_damage.jpg?raw=true) should be put in white_noise)
+  (Images like ![this](https://github.com/khandakerrahin/Public-AI-Challenge-Progetto-Caproni/tree/main/images/white_damge.jpg?raw=true) should be put in white_noise)
 
 
 Required structure of the folders (to make it work as it is):
