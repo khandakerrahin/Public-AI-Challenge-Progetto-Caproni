@@ -24,3 +24,13 @@ Required structure of the folders (to make it work as it is):
             |--- white_damage_2.jpg
             |--- ...
 ```
+
+Use example for this script:
+
+```
+white_path = 'path_to_white_noise_folder'
+black_path = 'path_to_black_noise_folder'
+
+create_crops(white_path, mode='white')
+create_crops(black_path, mode='black')
+```
