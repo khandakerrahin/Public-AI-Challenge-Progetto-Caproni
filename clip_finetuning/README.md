@@ -14,8 +14,6 @@
 
     data: contains train, validation, and test image folders
 
-    best_model.pt: model checkpoint after 10 epochs
-
 
 
 Required structure of the folders (to make it work as it is):
