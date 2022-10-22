@@ -15,15 +15,14 @@ if device == "cpu":
 
 
 train_dir = './data/train/'
-train_data = CustomDataset(train_dir)
+train_data = CustomDataset(train_dir, preprocess)
 train_dataloader = DataLoader(train_data, batch_size=16)
 
 val_dir = './data/test/'
-val_data = CustomDataset(val_dir)
+val_data = CustomDataset(val_dir, preprocess)
 val_dataloader = DataLoader(val_data, batch_size=16)
 
-num_epochs = 10
-BATCH_SIZE = 16
+num_epochs = 100
 
 model_path = 'best_model.pt'
 
