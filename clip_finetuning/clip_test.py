@@ -13,7 +13,7 @@ checkpoint = torch.load('best_model.pt')
 model.load_state_dict(checkpoint)
 
 
-class_names = ['newspaper', 'airplane', 'object', 'vehicle', 'building', 'figure', 'people', 'landscape']
+class_names = ['airplane', 'building', 'factory', 'figure', 'landscape', 'newspaper', 'object', 'people', 'vehicle']
 
 
 dataset = CustomDataset('./data/test/', preprocess)   # folder without labels
