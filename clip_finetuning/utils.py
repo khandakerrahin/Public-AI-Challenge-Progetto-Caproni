@@ -7,18 +7,21 @@ class CustomDataset:
     def __init__(self, image_dir, preprocess):
         img_dir = glob(image_dir + '**/*')
         self.image_path = img_dir
-        self.title = clip.tokenize([path.split('/')[-2] for path in img_dir])
+        self.label = [path.split('/')[-2] for path in self.image_path]
+
+        classes = list(set(self.label))
+        self.classes_to_idx = {classes[i]: i for i in range(len(classes))}
         self.preprocess = preprocess
 
     def __len__(self):
-        return len(self.title)
+        return len(self.label)
 
     def __getitem__(self, idx):
         image = self.preprocess(Image.open(self.image_path[idx]).convert("RGB"))
-        title = self.title[idx]
+        label = self.label[idx]
         path = self.image_path[idx]
-        return image, title, path
-
+        class_ids = self.classes_to_idx[label]
+        return image, label, class_ids, path
 
 
 def convert_models_to_fp32(model):
