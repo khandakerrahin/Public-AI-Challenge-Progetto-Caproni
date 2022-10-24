@@ -12,11 +12,11 @@ validation.py
 Structure of the folders:
 
 ```
-| caproni_topredict
+| caproni_topredict                       # Image for evaluation of the model (no mask required)
     |--- FC_12_00620.jpg
     |--- FC_12_00640.jpg
     |--- ...
-| damage_dataset_splitted
+| damage_dataset_splitted                 # Images for train and test (masks are required)
     | train
         |--- image
                |--- 000000000019.png
