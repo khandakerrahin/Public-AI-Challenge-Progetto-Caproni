@@ -60,3 +60,7 @@ def from_segmentation_to_mask(seg_map):
                 new_arr[i, j, :] = 255
     
     return new_arr
+
+
+def reverse_one_hot(image):
+    return np.argmax(image, axis=-1)
