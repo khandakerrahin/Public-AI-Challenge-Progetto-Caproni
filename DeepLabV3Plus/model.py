@@ -3,7 +3,7 @@ from glob import glob
 import segmentation_models_pytorch as smp
 import warnings
 
-def load_model(device: torch.device, load_best: bool = False, epochs_dir: str = '', n_classes: int = 5):
+def load_model(device: torch.device, load_best: bool = False, epochs_dir: str = '', n_classes: int = 5, force_model: str = ''):
     """
     :param device: device in which to send the model (e.g., torch.device('cuda'))
     :param load_best: whether to retrieve the best available model according to its IoU or init a new model
@@ -11,7 +11,10 @@ def load_model(device: torch.device, load_best: bool = False, epochs_dir: str = 
     :param n_classes: number of classes to predict
     :return: model
     """
-    if load_best:
+    if force_model != '':
+        model = torch.load(force_model, map_location=DEVICE)
+        
+    elif load_best:
         if epochs_dir is None:
             raise ValueError('You are trying to load a model from previous epochs, but the folderfrom which to retrieve it is None.')
         else:
