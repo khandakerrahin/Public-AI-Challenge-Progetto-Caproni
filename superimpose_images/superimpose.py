@@ -1,3 +1,6 @@
+from PIL import Image
+import numpy as np
+
 def superimpose(image, list_of_damages, max_size=512):
     """
     param: image, image in which to superimpose damage/damages
