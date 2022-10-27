@@ -9,12 +9,10 @@ from glob import glob
 from PIL import Image
 
 
-model_path = "./results"
-
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_path)
 model = ViTForImageClassification.from_pretrained(model_path)
 
-images = glob('../clip_finetuning/data/test/**/*')
+images = glob('../clip_finetuning/data2/test/**/*')
 random.shuffle(images)
 
 correct = 0
@@ -30,4 +28,4 @@ for i, image in enumerate(tqdm(images)):
         correct += 1
     n += 1
 
-print(f"correct {correct} over {n}")
+print(f"Test accuracy: {round(correct / n, 3)}")
