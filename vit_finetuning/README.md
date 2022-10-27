@@ -1,10 +1,10 @@
 # ViT fine tuning
 
 #### For training run:
-    python3 VIT_classifier.py
+    python3 vit_train.py
 
 #### For test run:
-    python3 test_vit.py
+    python3 vit_test.py
 
 
 #### Structure
