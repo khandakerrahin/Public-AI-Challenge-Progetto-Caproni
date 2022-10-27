@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from torch.utils.data import DataLoader
 from torch import nn, optim
@@ -9,33 +10,28 @@ from utils import *
 model, preprocess = clip.load("ViT-B/32", device='cuda' if torch.cuda.is_available() else 'cpu')
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-checkpoint = torch.load('best_model.pt')
-model.load_state_dict(checkpoint)
-
-
 if device == "cpu":
     model.float()
 
-
-train_dir = './data2/train/'
-train_data = CustomDataset(train_dir, preprocess)
+train_dir = './data/train/'
+train_data = CustomDataset(train_dir, get_transforms())
 train_dataloader = DataLoader(train_data, batch_size=16)
 
-val_dir = './data2/validation/'
-val_data = CustomDataset(val_dir, preprocess)
+val_dir = './data/validation/'
+val_data = CustomDataset(val_dir, get_transforms())
 val_dataloader = DataLoader(val_data, batch_size=16)
 
 num_epochs = 10
 
-model_path = 'best_model.pt'
+model_path = 'best_model2.pt'
 
-optimizer = optim.Adam(model.parameters(), lr=1e-5)
+optimizer = optim.Adam(model.parameters(), lr=5e-5, betas=(0.9, 0.98), eps=1e-6, weight_decay=0.2)
 scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, len(train_dataloader) * num_epochs)
 
 loss_img = nn.CrossEntropyLoss()
 loss_txt = nn.CrossEntropyLoss()
 
-best_val_loss = 1e5
+best_val_loss = np.inf
 
 
 for epoch in range(num_epochs):
@@ -47,7 +43,6 @@ for epoch in range(num_epochs):
     for batch in pbar:
         step += 1
         optimizer.zero_grad()
-
         images, texts, class_ids, _ = batch
         images = images.to(device)
         texts = clip.tokenize(texts).to(device)
@@ -105,7 +100,7 @@ for epoch in range(num_epochs):
         torch.save(model.state_dict(), model_path)
 
     accuracy = torch.stack(accuracy).mean().cpu().numpy()
-    print(f"EPOCH: {epoch+1} \nTRAIN_LOSS: {train_loss} - VAL_LOSS: {val_loss} \nACCURACY: {accuracy}")
+    print(f"EPOCH: {epoch+1} \nTRAIN_LOSS: {train_loss} - VAL_LOSS: {val_loss} - Accuracy: {acc_top5} ")
 
 
 

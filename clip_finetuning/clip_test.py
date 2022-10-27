@@ -1,4 +1,6 @@
+import numpy as np
 import torch
+import torchmetrics
 from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -13,7 +15,7 @@ checkpoint = torch.load('best_model.pt')
 model.load_state_dict(checkpoint)
 
 
-class_names = ['newspaper', 'airplane', 'object', 'vehicle', 'building', 'figure', 'people', 'landscape']
+class_names = ['airplane', 'building', 'factory', 'figure', 'landscape', 'newspaper', 'object', 'people', 'vehicle']
 
 
 dataset = CustomDataset('./data/test/', preprocess)   # folder without labels
@@ -23,7 +25,6 @@ dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
 # CLIP prediction for test images
 out = {k: [] for k in class_names}
-
 p_bar = tqdm(dataloader)
 with torch.no_grad():
     for i, data in enumerate(p_bar):
@@ -40,13 +41,10 @@ with torch.no_grad():
         out[pred_class_names_batch].append(pth[0])
 
 
-
 # plot image with predicted label
 for label in out:
     images = out[label]
     for i, im in enumerate(images):
-        if i > 2:
-            break
         plt.imshow(plt.imread(im), cmap='gray')
         plt.title(label)
         plt.axis('off')
