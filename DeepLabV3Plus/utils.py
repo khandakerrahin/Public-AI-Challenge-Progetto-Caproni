@@ -13,7 +13,7 @@ def mask_to_consider(lst):
     
     for cls in lst:
         if cls in class_diz:
-            rgb_values.append(clas_diz[cls])
+            rgb_values.append(class_diz[cls])
     
     return np.array(rgb_values)
 
