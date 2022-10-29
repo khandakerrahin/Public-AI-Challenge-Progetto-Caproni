@@ -1,10 +1,7 @@
-import os
-
 from datasets import load_dataset, load_metric
 from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer
 import torch
 import numpy as np
-os.listdir('./results')
 
 model_name_or_path = 'google/vit-base-patch16-224-in21k'
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_name_or_path)
@@ -53,16 +50,17 @@ training_args = TrainingArguments(
   output_dir="results",
   per_device_train_batch_size=16,
   evaluation_strategy="steps",
-  num_train_epochs=4,
+  num_train_epochs=10,
   fp16=False,
-  save_steps=100,
-  eval_steps=100,
-  logging_steps=10,
+  save_steps=10,
+  eval_steps=10,
+  logging_steps=1,
   learning_rate=2e-4,
-  save_total_limit=2,
+  save_total_limit=1,
+  save_strategy='no',
   remove_unused_columns=False,
   push_to_hub=False,
-  load_best_model_at_end=True,
+  load_best_model_at_end=False,
 )
 
 
