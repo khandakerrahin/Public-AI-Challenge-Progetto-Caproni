@@ -4,6 +4,8 @@ import albumentations as A
 import cv2
 from glob import glob
 from model import load_model
+from utils import mask_to_consider, from_segmentation_to_mask, reverse_one_hot
+from custom_dataset import DamageDataset
 import os
 
 root_dir = '/Public-AI-Challenge-Progetto-Caproni/DeepLabV3Plus/damage_dataset_splitted'
