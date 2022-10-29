@@ -12,7 +12,7 @@ def load_model(device: torch.device, load_best: bool = False, epochs_dir: str = 
     :return: model
     """
     if force_model != '':
-        model = torch.load(force_model, map_location=DEVICE)
+        model = torch.load(force_model, map_location=device)
         
     elif load_best:
         if epochs_dir is None:
