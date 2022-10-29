@@ -53,6 +53,9 @@ test_dataset = DamageDataset(root_dir=root_dir,
                              preprocessing=None,# get_preprocessing(preprocessing_fn),
                              train=False)
 
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=4)
+test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False, num_workers=4)
+
 # HyperParams
 
 N_EPOCHS = 10
