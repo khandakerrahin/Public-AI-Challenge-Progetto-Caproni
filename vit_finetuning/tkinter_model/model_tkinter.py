@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-
-import time
+import threading
 import tkinter as tk
 from tkinter import ttk
 
-import os
 from final_model import *
 
 root = tk.Tk()
@@ -186,27 +184,23 @@ def create_model(f, text1, text2, text3):
 
 
 def start_training(f, trainer):
+    pb = threading.Thread(target=start_progress_bar, args=(f, 'Starting training', trainer, 'T'))
+    pb.start()
+
+
+def training_done(f, trainer):
     f.pack_forget()
-    f = tk.Frame(root, width=700, height=600)
-    f.config(bg='white')
-    f.pack(fill='both', expand=True)
+    new_f = tk.Frame(root, width=700, height=600)
+    new_f.config(bg='white')
+    new_f.pack(fill='both', expand=True)
 
-    label1 = tk.Label(f,
-                      text='Starting training',
-                      font=('Ubuntu Mono', 18))
-    label1.config(bg='white')
-    label1.pack(ipadx=10, ipady=30)
-
-    f.update()
-
-    trainer.train()
-
-    label2 = tk.Label(f, text='Training done!', font=("Ubuntu Mono", 18))
+    label2 = tk.Label(new_f, text='Training done!', font=('Ubuntu Mono', 18))
+    label2.config(bg='white')
     label2.pack(ipadx=10, ipady=30)
 
-    label3 = tk.Label(f, text=f'Model saved in {trainer.args.output_dir}', font=("Ubuntu Mono", 18))
+    label3 = tk.Label(f, text=f'Model saved in {trainer.output_folder}', font=("Ubuntu Mono", 18))
     label3.pack(ipadx=10, ipady=30)
-    stop_or_continue(f, trainer)
+    stop_or_continue(new_f, trainer)
 
 
 def stop_or_continue(f, trainer):
@@ -229,14 +223,11 @@ def stop_or_continue(f, trainer):
 
 
 def start_classification(f, trainer):
-    f, pb = start_progress_bar(f, 'Starting Classification')
-    f.update()
+    pb = threading.Thread(target=start_progress_bar, args=(f, 'Starting Classification', trainer, 'C'))
+    pb.start()
 
-    pb.start(3)
 
-    trainer.classify()
-
-    pb.stop()
+def classification_done(f):
     f.pack_forget()
     new_f = tk.Frame(root, width=700, height=600)
     new_f.config(bg='white')
@@ -249,11 +240,6 @@ def start_classification(f, trainer):
     b = tk.Button(new_f, text='Close', height=1, width=30,
                   command=lambda: root.quit())
     b.pack(ipadx=10, ipady=10, expand=True)
-
-    #
-    # add progress bar
-    #
-    # add exit button
 
 
 def popup(f, text):
@@ -351,8 +337,7 @@ def info_popup(f, text):
     close_b.pack()
 
 
-# TODO update progress bar during training and classification processes
-def start_progress_bar(f, text):
+def start_progress_bar(f, text, function, task):
     f.pack_forget()
 
     f = tk.Frame(root, width=700, height=600)
@@ -371,16 +356,25 @@ def start_progress_bar(f, text):
     )
     # place the progressbar
     pb.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-    pb.start(10)
-    f.update()
-    return f, pb
+
+    pb.start(5)
+
+    if task == 'T':
+        t1 = threading.Thread(target=function.train)
+    else:
+        t1 = threading.Thread(target=function.classify)
+
+    t1.start()
+    t1.join()
+    pb.stop()
+
+    if task == 'T':
+        training_done(f, function)
+    else:
+        classification_done(f)
 
 
 start_frame(root)
 
 root.mainloop()
-
-
-
-
 
