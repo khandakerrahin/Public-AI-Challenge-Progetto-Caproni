@@ -95,7 +95,6 @@ class Train:
         train_results = trainer.train()
 
         trainer.save_model()
-
         train_metrics = trainer.evaluate(self.dataset['train'])
 
         trainer.log_metrics("train", train_results.metrics)
