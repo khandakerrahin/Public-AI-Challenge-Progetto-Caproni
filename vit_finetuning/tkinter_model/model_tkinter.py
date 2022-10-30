@@ -19,7 +19,7 @@ def start_frame(root):
     frame.config(bg='white')
     frame.pack(fill='both', expand=True)
 
-    picture = tk.PhotoImage(file='airplane.png')
+    picture = tk.PhotoImage(file='./imgs/airplane.png')
     label = tk.Label(frame, text='Welcome!', font=('Ubuntu Mono', 18), image=picture, compound='bottom')
     label.image = picture
     label.config(bg='white')
@@ -265,7 +265,7 @@ def popup_hippo(f):
     frame.config(bg='white')
     frame.pack(fill='both', expand=True)
 
-    picture = tk.PhotoImage(file='hippo.png').subsample(5, 5)
+    picture = tk.PhotoImage(file='./imgs/hippo.png').subsample(5, 5)
     label = tk.Label(frame, text='Welcome!', font=('Ubuntu Mono', 18), image=picture, compound='bottom')
     label.image = picture
     label.config(bg='white')
