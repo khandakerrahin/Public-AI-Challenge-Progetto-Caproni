@@ -53,9 +53,7 @@ def choose_model(f):
                                      command=lambda: existing_model(f))
     start_existing_model.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
 
-    start_new_model = tk.Button(f, text='New model',  height=5, width=30,
-                                command=lambda: new_model(f))
-    start_new_model.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+    #
 
     menu_button = tk.Button(f, text='Back', height=2, width=10, command=lambda: start_frame(root, f))
     menu_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
@@ -116,114 +114,8 @@ def load_model(f, text1, text2):
         start_classification(f, model)
 
 
-# new model frame
-def new_model(f):
-    f.pack_forget()
-
-    new_f = tk.Frame(root, width=700, height=600)
-    new_f.config(bg='white')
-    new_f.pack(fill='both', expand=True)
-
-    label1 = tk.Label(new_f,
-                      text='Please, provide the path to labeled folders',
-                      font=('Ubuntu Mono', 12))
-    label1.config(bg='white')
-    label1.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
-
-    input_text1 = tk.Text(new_f, height=2, width=60)
-    input_text1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
-
-    label2 = tk.Label(new_f,
-                      text='Please, provide the path of the folder with images to classify',
-                      font=('Ubuntu Mono', 12))
-    label2.config(bg='white')
-    label2.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
-
-    input_text2 = tk.Text(new_f, height=2, width=60)
-    input_text2.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
-
-    label3 = tk.Label(new_f,
-                      text='Please, provide the path to save the model (existing or new)',
-                      font=('Ubuntu Mono', 12))
-    label3.config(bg='white')
-    label3.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-
-    input_text3 = tk.Text(new_f, height=2, width=60)
-    input_text3.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
-
-    b = tk.Button(new_f, text='Start', height=2, width=30,
-                  command=lambda: create_model(new_f, input_text1, input_text2, input_text3))
-    b.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
-
-    back_button = tk.Button(new_f, text='Back', height=2, width=10, command=lambda: choose_model(new_f))
-    back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
-
-
-def create_model(f, text1, text2, text3):
-    labeled_folders = text1.get(1.0, "end-1c")
-    folder_to_classify = text2.get(1.0, "end-1c")
-    model_folder = text3.get(1.0, "end-1c")
-
-    labeled_exists = True
-    classification_exists = True
-
-    if not os.path.exists(labeled_folders):
-        popup(f, "You must specify an existing path for labeled folders")
-        labeled_exists = False
-
-    if not os.path.exists(folder_to_classify):
-        popup(f, "The path for label inference does not exist!")
-        classification_exists = False
-
-    if not os.path.exists(model_folder):
-        os.makedirs(model_folder)
-
-    if labeled_exists and classification_exists:
-        trainer = Train(labeled_folders, folder_to_classify, model_folder)
-        start_training(f, trainer)
-
-
-def start_training(f, trainer):
-    pb = threading.Thread(target=start_progress_bar, args=(f, 'Starting training', trainer, 'T'))
-    pb.start()
-
-
-def training_done(f, trainer):
-    f.pack_forget()
-    new_f = tk.Frame(root, width=700, height=600)
-    new_f.config(bg='white')
-    new_f.pack(fill='both', expand=True)
-
-    label2 = tk.Label(new_f, text='Training done!', font=('Ubuntu Mono', 18))
-    label2.config(bg='white')
-    label2.pack(ipadx=10, ipady=30)
-
-    label3 = tk.Label(f, text=f'Model saved in {trainer.output_folder}', font=("Ubuntu Mono", 18))
-    label3.pack(ipadx=10, ipady=30)
-    stop_or_continue(new_f, trainer)
-
-
-def stop_or_continue(f, trainer):
-    f.pack_forget()
-    f = tk.Frame(root, width=700, height=600)
-    f.config(bg='white')
-    f.pack(fill='both', expand=True)
-
-    label1 = tk.Label(f,
-                      text='Training done',
-                      font=('Ubuntu Mono', 18))
-    label1.config(bg='white')
-    label1.pack(ipadx=10, ipady=30)
-
-    classification = tk.Button(f, text='Start classification', command=lambda: start_classification(f, trainer))
-    classification.pack(ipadx=10, ipady=10, expand=True)
-
-    stop_process = tk.Button(f, text='Stop process', command=lambda: root.quit())
-    stop_process.pack(ipadx=10, ipady=10, expand=True)
-
-
 def start_classification(f, trainer):
-    pb = threading.Thread(target=start_progress_bar, args=(f, 'Starting Classification', trainer, 'C'))
+    pb = threading.Thread(target=start_progress_bar, args=(f, 'Starting Classification', trainer))
     pb.start()
 
 
@@ -337,7 +229,7 @@ def info_popup(f, text):
     close_b.pack()
 
 
-def start_progress_bar(f, text, function, task):
+def start_progress_bar(f, text, function):
     f.pack_forget()
 
     f = tk.Frame(root, width=700, height=600)
@@ -357,21 +249,15 @@ def start_progress_bar(f, text, function, task):
     # place the progressbar
     pb.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-    pb.start(5)
+    pb.start()
 
-    if task == 'T':
-        t1 = threading.Thread(target=function.train)
-    else:
-        t1 = threading.Thread(target=function.classify)
+    t1 = threading.Thread(target=function.classify)
 
     t1.start()
     t1.join()
     pb.stop()
 
-    if task == 'T':
-        training_done(f, function)
-    else:
-        classification_done(f)
+    classification_done(f)
 
 
 start_frame(root)
