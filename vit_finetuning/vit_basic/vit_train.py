@@ -49,18 +49,19 @@ model = ViTForImageClassification.from_pretrained(
 training_args = TrainingArguments(
   output_dir="results",
   per_device_train_batch_size=16,
-  evaluation_strategy="steps",
+  evaluation_strategy="epoch",
   num_train_epochs=10,
   fp16=False,
   save_steps=10,
   eval_steps=10,
-  logging_steps=1,
+  logging_steps=10,
+  logging_strategy="epoch",
   learning_rate=2e-4,
-  save_total_limit=1,
-  save_strategy='no',
+  save_total_limit=10,
+  save_strategy='epoch',
   remove_unused_columns=False,
   push_to_hub=False,
-  load_best_model_at_end=False,
+  load_best_model_at_end=True,
 )
 
 
@@ -77,16 +78,15 @@ trainer = Trainer(
 train_results = trainer.train()
 
 trainer.save_model()
-train_metrics = trainer.evaluate(dataset['train'])
 
 trainer.log_metrics("train", train_results.metrics)
 trainer.save_metrics("train", train_results.metrics)
-
-trainer.log_metrics("train", train_metrics)
-trainer.save_metrics("train", train_metrics)
 
 trainer.save_state()
 
 metrics = trainer.evaluate(dataset['validation'])
 trainer.log_metrics("eval", metrics)
 trainer.save_metrics("eval", metrics)
+
+
+# to get the metrics call trainer.state.log_history
