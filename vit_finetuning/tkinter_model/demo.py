@@ -49,11 +49,15 @@ def choose_model(f):
     f.config(bg='white')
     f.pack(fill='both', expand=True)
 
-    start_existing_model = tk.Button(f, text='Existing model', height=5, width=30,
+    start_classification = tk.Button(f, text='Classification', height=5, width=30,
                                      command=lambda: existing_model(f))
-    start_existing_model.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+    start_classification.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    #
+    start_segmentation = tk.Button(f, text='Damage Identification', height=5, width=30)
+    start_segmentation.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+
+    start_metadata = tk.Button(f, text='Metadata Extraction', height=5, width=30)
+    start_metadata.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
 
     menu_button = tk.Button(f, text='Back', height=2, width=10, command=lambda: start_frame(root, f))
     menu_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)

@@ -3,8 +3,8 @@ from transformers import ViTFeatureExtractor, ViTForImageClassification, Trainin
 import torch
 import numpy as np
 
-model_name_or_path = 'google/vit-base-patch16-224-in21k'
-feature_extractor = ViTFeatureExtractor.from_pretrained(model_name_or_path)
+model_path = 'google/vit-base-patch16-224-in21k'
+feature_extractor = ViTFeatureExtractor.from_pretrained(model_path)
 
 
 def process_example(example):
@@ -34,7 +34,7 @@ def compute_metrics(p):
     return metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
 
 
-dataset = load_dataset('../clip_finetuning/data')
+dataset = load_dataset('../../clip_finetuning/data/')
 labels = dataset['train'].features['label'].names
 dataset = dataset.with_transform(transform)
 
@@ -69,20 +69,24 @@ trainer = Trainer(
     args=training_args,
     data_collator=collate_fn,
     compute_metrics=compute_metrics,
-    train_dataset=prepared_ds["train"],
-    eval_dataset=prepared_ds["validation"],
+    train_dataset=dataset["train"],
+    eval_dataset=dataset["validation"],
     tokenizer=feature_extractor,
 )
-
 
 train_results = trainer.train()
 
 trainer.save_model()
+train_metrics = trainer.evaluate(dataset['train'])
+
 trainer.log_metrics("train", train_results.metrics)
 trainer.save_metrics("train", train_results.metrics)
+
+trainer.log_metrics("train", train_metrics)
+trainer.save_metrics("train", train_metrics)
+
 trainer.save_state()
 
-
-metrics = trainer.evaluate(prepared_ds['validation'])
+metrics = trainer.evaluate(dataset['validation'])
 trainer.log_metrics("eval", metrics)
 trainer.save_metrics("eval", metrics)

@@ -1,14 +1,10 @@
 import random
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-from datasets import load_dataset, load_metric
-from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer
-import torch
-import numpy as np
+from transformers import ViTFeatureExtractor, ViTForImageClassification
 from glob import glob
 from PIL import Image
 
-
+model_path = "/path/for/fine_tuned_model"
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_path)
 model = ViTForImageClassification.from_pretrained(model_path)
 
