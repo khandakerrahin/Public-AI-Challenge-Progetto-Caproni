@@ -8,7 +8,7 @@ model_path = "/path/for/fine_tuned_model"
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_path)
 model = ViTForImageClassification.from_pretrained(model_path)
 
-images = glob('../clip_finetuning/data2/test/**/*')
+images = glob('./path_to_test/**/*.jpg')
 random.shuffle(images)
 
 correct = 0

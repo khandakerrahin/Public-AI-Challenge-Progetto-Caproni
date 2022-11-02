@@ -34,7 +34,7 @@ def compute_metrics(p):
     return metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
 
 
-dataset = load_dataset('../../clip_finetuning/data/')
+dataset = load_dataset('./path_to_train_and_validation/')
 labels = dataset['train'].features['label'].names
 dataset = dataset.with_transform(transform)
 
