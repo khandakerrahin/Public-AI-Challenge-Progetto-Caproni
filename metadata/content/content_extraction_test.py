@@ -11,7 +11,7 @@ from PIL import Image
 import torch.nn as nn
 from torch.nn.functional import sigmoid
 
-model_path = '/path_to_checkpoint'
+model_path = '/home/a/results/beit/checkpoint-400'
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_path, do_resize=False)
 model = ViTForImageClassification.from_pretrained(model_path)
 
@@ -30,7 +30,7 @@ def get_lab_mask(labels, content):
     return np.array(list({i: 1 if i in content.split(',') else 0 for i in labels}.values()))
 
 
-df = pd.read_csv('/path_to_csv_with_path_and_content/')
+df = pd.read_csv('/home/a/DS/challenge/caproni.csv')
 
 labs = all_labels(df)
 df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labs, x))
