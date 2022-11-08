@@ -7,7 +7,6 @@ from datasets import load_dataset, load_metric
 from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer
 import torch
 import numpy as np
-import random
 from tqdm import tqdm
 
 
