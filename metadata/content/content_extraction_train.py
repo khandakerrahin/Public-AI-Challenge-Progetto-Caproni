@@ -65,7 +65,7 @@ def get_lab_mask(labels, content):
     return np.array(list({i: 1 if i in content.split(',') else 0 for i in labels}.values()))
 
 
-df = pd.read_csv('/home/a/DS/challenge/caproni.csv')
+df = pd.read_csv('/path_to_csv_with_path_and_content/')
 
 labels = all_labels(df)
 df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labels, x))
@@ -94,7 +94,7 @@ model = BeitForImageClassification.from_pretrained(model_name,
 
 
 training_args = TrainingArguments(
-    output_dir="/home/a/results/beit",
+    output_dir="../results",
     per_device_train_batch_size=8,
     evaluation_strategy="epoch",
     num_train_epochs=10,
