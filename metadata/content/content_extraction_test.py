@@ -11,9 +11,9 @@ from PIL import Image
 import torch.nn as nn
 from torch.nn.functional import sigmoid
 
-model_path = '/path_to_checkpoint/'
+model_path = '/home/a/results/beit/checkpoint-400'
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_path, do_resize=False)
-model = ViTForImageClassification.from_pretrained(model_path, interpolate_pos_encoding=True)
+model = ViTForImageClassification.from_pretrained(model_path)
 
 
 def all_labels(df):
@@ -30,7 +30,7 @@ def get_lab_mask(labels, content):
     return np.array(list({i: 1 if i in content.split(',') else 0 for i in labels}.values()))
 
 
-df = pd.read_csv('/path_to_csv_with_imagepath_and_content/')
+df = pd.read_csv('/home/a/DS/challenge/caproni.csv')
 
 labs = all_labels(df)
 df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labs, x))
@@ -38,24 +38,13 @@ df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labs, x))
 images = list(df.loc[df.img_path.str.contains('test')].img_path)
 labels = list(df.loc[df.img_path.str.contains('test')].content_mask)
 
-corr = 0
-for i, image in enumerate(tqdm(images)):
-    y_true = torch.tensor(labels[i])
-    im = Image.open(image).convert("RGB")
-    encoding = feature_extractor([im], return_tensors='pt')
-    output = model(**encoding)
-    y_pred = output.logits.sigmoid()
-    if np.sum(((y_pred >= 0.5) == y_true).numpy()) == len(labs):
-        corr += 1
-
-print(f"accuracy: {round(corr/len(images), 4)}")
 
 #
 corr = 0
 n = 0
 for i, image in enumerate(tqdm(images)):
     y_true = torch.tensor(labels[i])
-    im = Image.open(image).convert("RGB")
+    im = Image.open(image).convert("RGB").resize((224, 224))
     encoding = feature_extractor([im], return_tensors='pt')
     output = model(**encoding)
     y_pred = output.logits.sigmoid()
