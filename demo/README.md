@@ -12,7 +12,7 @@ It will contain the folders of classified images.
 N.B classified images are a copy of the unlabeled images.
 
 
-At the end of metadata extraction, a csv file "metadata_results.csv" will be created in the provided folder. It will contain the image paths, their subject, the content, and the caption.
+At the end of metadata extraction, a csv file "metadata_results.csv" will be created in the provided folder. It will contain the image paths, their subject, and the content.
 ##
 
 

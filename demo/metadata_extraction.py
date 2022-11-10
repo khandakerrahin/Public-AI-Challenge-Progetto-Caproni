@@ -46,7 +46,7 @@ class MetadataExtraction:
             predicted_labels = [model.config.id2label[j] for j in np.where(logits[0] >= 0.5)[0]]
             if len(predicted_labels) == 0:
                 predicted_labels = [model.config.id2label[logits.argmax(-1).item()]]
-            contents.append(predicted_labels)
+            contents.append(", ".join(predicted_labels))
         return contents
 
     def get_description(self):

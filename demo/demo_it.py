@@ -23,12 +23,12 @@ def start_frame(root, f=None):
     frame.pack(fill='both', expand=True)
 
     picture = tk.PhotoImage(file='./imgs/airplane.png')
-    label = tk.Label(frame, text='Welcome!', font=('Ubuntu Mono', 18, 'bold'), image=picture, compound='bottom')
+    label = tk.Label(frame, text='Benvenuti!', font=('Ubuntu Mono', 18, 'bold'), image=picture, compound='bottom')
     label.image = picture
     label.config(bg='white')
     label.pack(ipadx=10, ipady=50)
 
-    start_button = tk.Button(frame, text='Press here to start',  height=2, width=15,
+    start_button = tk.Button(frame, text='Premi qui per iniziare',  height=2, width=15,
                              command=lambda: choose_model(frame))
     start_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
@@ -50,21 +50,21 @@ def choose_model(f):
     f.config(bg='white')
     f.pack(fill='both', expand=True)
 
-    label = tk.Label(f, text='Choose your task', font=("Ubuntu Mono", 18, 'bold'))
+    label = tk.Label(f, text="Seleziona l'obiettivo", font=("Ubuntu Mono", 18, 'bold'))
     label.config(bg='white')
     label.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
 
-    start_classification = tk.Button(f, text='Thematic Subdivision', height=4, width=30,
+    start_classification = tk.Button(f, text='Suddivisione Tematica', height=4, width=30,
                                      command=lambda: classification(f))
     start_classification.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
 
-    start_metadata = tk.Button(f, text='Metadata Extraction', height=4, width=30, command=lambda: metadata(f))
+    start_metadata = tk.Button(f, text='Estrazione di Metadata', height=4, width=30, command=lambda: metadata(f))
     start_metadata.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
     # start_segmentation = tk.Button(f, text='Damage Identification', height=5, width=30)
     # start_segmentation.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
-    menu_button = tk.Button(f, text='Back', height=2, width=10, command=lambda: start_frame(root, f))
+    menu_button = tk.Button(f, text='Indietro', height=2, width=10, command=lambda: start_frame(root, f))
     menu_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
@@ -75,19 +75,19 @@ def classification(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    input_text = filedialog.askdirectory(initialdir="/", title="Choose the image folder")
+    input_text = filedialog.askdirectory(initialdir="/", title="Seleziona la cartella delle immagini")
 
     label1 = tk.Label(new_f,
-                      text=f'Image folder selected: {input_text}',
-                      font=('Ubuntu Mono', 12))
+                      text=f'Cartella immagii selezionata: {input_text}',
+                      font=('Ubuntu Mono', 15))
     label1.config(bg='white')
     label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    b = tk.Button(new_f, text='Start', height=2, width=30,
+    b = tk.Button(new_f, text='Inizia', height=2, width=30,
                   command=lambda: start_classification(new_f, input_text))
     b.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
-    back_button = tk.Button(new_f, text='Back', height=2, width=10, command=lambda: choose_model(new_f))
+    back_button = tk.Button(new_f, text='Indietro', height=2, width=10, command=lambda: choose_model(new_f))
     back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
@@ -95,7 +95,7 @@ def start_classification(f, folder_to_classify):
     model = Classify(input_folder=folder_to_classify)
 
     pb = threading.Thread(target=start_progress_bar,
-                      args=(f, 'Starting Thematic Subdivision', model, 'c'))
+                      args=(f, 'Procedo con la Suddivisione Tematica', model, 'c'))
     pb.start()
 
 
@@ -105,12 +105,12 @@ def classification_done(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    label1 = tk.Label(new_f, text="Thematic Subdivision done!", font=("Ubuntu Mono", 18, 'bold'))
+    label1 = tk.Label(new_f, text="Suddivisione tematica terminata!", font=("Ubuntu Mono", 18, 'bold'))
     label1.config(bg='white')
     label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    label2 = tk.Label(new_f, text='press Menu to go on the main page \n '
-                                  'press Close to exit.               ',
+    label2 = tk.Label(new_f, text='premi Menu per andare alla pagina iniziale \n'
+                                  'Premi Chiudi per terminare.                ',
                       font=('Ubuntu Mono', 16))
     label2.config(bg='white')
     label2.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
@@ -118,7 +118,7 @@ def classification_done(f):
     b1 = tk.Button(new_f, text='Menu', height=2, width=30, command=lambda: start_frame(root, new_f))
     b1.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
-    b2 = tk.Button(new_f, text="Close", height=2, width=30, command=lambda: root.quit())
+    b2 = tk.Button(new_f, text="Chiudi", height=2, width=30, command=lambda: root.quit())
     b2.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
 
@@ -129,33 +129,33 @@ def metadata(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    input_text1 = filedialog.askdirectory(initialdir="/", title="Choose the image folder")
-    input_text2 = filedialog.askdirectory(initialdir="/", title="Choose the folder for the results")
+    input_text1 = filedialog.askdirectory(initialdir="/", title="Seleziona la cartella delle immagini")
+    input_text2 = filedialog.askdirectory(initialdir="/", title="Seleziona la cartella dove salvare i risulati")
 
     label1 = tk.Label(new_f,
-                      text=f'Image folder selected: {input_text1}',
+                      text=f'Cartella immagini selezionata: {input_text1}',
                       font=('Ubuntu Mono', 15))
     label1.config(bg='white')
     label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
     label2 = tk.Label(new_f,
-                      text=f'Output folder selected: {input_text2}',
+                      text=f'Cartella risultati selezionata: {input_text2}',
                       font=('Ubuntu Mono', 15))
     label2.config(bg='white')
     label2.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-    b = tk.Button(new_f, text='Start', height=2, width=30,
+    b = tk.Button(new_f, text='Inizia', height=2, width=30,
                   command=lambda: start_metadata_extraction(new_f, input_text1, input_text2))
     b.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
-    back_button = tk.Button(new_f, text='Back', height=2, width=10, command=lambda: choose_model(new_f))
+    back_button = tk.Button(new_f, text='Indietro', height=2, width=10, command=lambda: choose_model(new_f))
     back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
 def start_metadata_extraction(f, image_folder, output_folder, task='s'):
     ME = MetadataExtraction(image_folder, output_folder)
     pb = threading.Thread(target=start_progress_bar,
-                          args=(f, 'Starting Metadata Extraction', ME, 'me'))
+                          args=(f, "Procedo con l'estrazione dei metadata", ME, 'me'))
     pb.start()
 
 
@@ -165,12 +165,12 @@ def metadata_extraction_done(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    label1 = tk.Label(new_f, text="Metadata Extraction done!", font=("Ubuntu Mono", 18, 'bold'))
+    label1 = tk.Label(new_f, text="Estrazione dei metadata terminata!", font=("Ubuntu Mono", 18, 'bold'))
     label1.config(bg='white')
     label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    label2 = tk.Label(new_f, text='press the menu button to go on the main page \n'
-                                  'press Close to exit.                         ',
+    label2 = tk.Label(new_f, text='premi Menu per andare alla pagina iniziale \n'
+                                  'Premi Chiudi per terminare.                ',
                       font=('Ubuntu Mono', 16))
     label2.config(bg='white')
     label2.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
@@ -178,7 +178,7 @@ def metadata_extraction_done(f):
     b1 = tk.Button(new_f, text='Menu', height=2, width=30, command=lambda: start_frame(root, new_f))
     b1.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
 
-    b2 = tk.Button(new_f, text="Close", height=2, width=30, command=lambda: root.quit())
+    b2 = tk.Button(new_f, text="Chiudi", height=2, width=30, command=lambda: root.quit())
     b2.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
 
@@ -226,28 +226,28 @@ def get_info(f):
     info_title.config(bg='white')
     info_title.place(relx=0.5, rely=0.1, anchor=tk.CENTER)
 
-    label1 = tk.Label(f, text='Classification                                                   ',
+    label1 = tk.Label(f, text='Suddivisione tematica                                                ',
                       font=('Ubuntu Mono', 14, 'bold'))
     label1.config(bg='white')
     label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    label2 = tk.Label(f, text="Provide the path for the images                                            \n"
-                              "At the end of the process, a new folder 'classification_result' inside the \n"
-                              "folder of unlabeled images will be created. It will contain the folders of \n"
-                              "classified images.                                                         \n\n"
-                              "N.B classified images are a copy of the unlabeled images.                  ",
+    label2 = tk.Label(f, text="Seleziona la cartella con le immagini                                      \n"
+                              "Alla fine del processo, una nuova cartella 'classification_result', verrà  \n"
+                              "creata all'interno della cartella immagini. La nuova cartella conterrà     \n"
+                              "le immagini suddivise in cartelle tematiche.                               \n\n"
+                              "N.B le immagini saranno una copia delle originali.                         ",
                       anchor='w', font=("Ubuntu Mono", 12))
     label2.config(bg='white')
     label2.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
 
-    label3 = tk.Label(f, text="Metadata Extraction                                             ",
+    label3 = tk.Label(f, text="Estrazione dei Metadata                                         ",
                       font=("Ubuntu Mono", 14, " bold"))
     label3.config(bg='white')
     label3.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-    label4 = tk.Label(f, text='Provide the path for the images                                            \n'
-                              "At the end of the process, a new CSV file 'metadata_results.csv', will be  \n"
-                              "created in the provided folder. It will contain the image paths, their     \n"
-                              "subject, the content.                                                      \n",
+    label4 = tk.Label(f, text='Seleziona la cartella con le immagini                                      \n'
+                              "Alla fine del processo, verrà creato un file CSV, metadata_results.csv,    \n"
+                              "nella cartella indicata. Il file conterrà il path delle immagini, il loro  \n"
+                              "soggeto e il contenuto.                                                    \n",
                       anchor='w', font=("Ubuntu Mono", 12))
     label4.config(bg='white')
     label4.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
@@ -257,7 +257,7 @@ def get_info(f):
     # label5.config(bg='white')
     # label5.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
-    menu_button = tk.Button(f, text='Back', command=lambda: start_frame(root, f))
+    menu_button = tk.Button(f, text='Indietro', command=lambda: start_frame(root, f))
     menu_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
