@@ -11,7 +11,7 @@ from PIL import Image
 import torch.nn as nn
 from torch.nn.functional import sigmoid
 
-model_path = '/home/a/results/beit/checkpoint-400'
+model_path = './results/vit32/checkpoint-n'     # n is the checkpoint number
 feature_extractor = ViTFeatureExtractor.from_pretrained(model_path, do_resize=False)
 model = ViTForImageClassification.from_pretrained(model_path)
 
@@ -30,7 +30,8 @@ def get_lab_mask(labels, content):
     return np.array(list({i: 1 if i in content.split(',') else 0 for i in labels}.values()))
 
 
-df = pd.read_csv('/home/a/DS/challenge/caproni.csv')
+# csv file contains: image paths, label and content columns
+df = pd.read_csv('./path_to_csv')
 
 labs = all_labels(df)
 df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labs, x))
@@ -53,11 +54,6 @@ for i, image in enumerate(tqdm(images)):
     if np.sum(((y_pred >= 0.5) == y_true).numpy()) == len(labs):
         corr += 1
     if len(pred_labels) == 0:
-        pred_labels = model.config.id2label[y_pred.argmax(-1).item()]
-    if true_labels != pred_labels and n <= 10:
-        plt.imshow(im)
-        plt.title(f"true: {true_labels} \npred: {pred_labels}")
-        plt.show()
-        n += 1
+        pred_labels = [model.config.id2label[y_pred.argmax(-1).item()]]
 
 print(f"accuracy: {round(corr/len(images), 4)}")

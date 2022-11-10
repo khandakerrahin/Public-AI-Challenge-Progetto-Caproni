@@ -1,21 +1,16 @@
 import datasets
 import numpy as np
-#from PIL import Image
-from torch.utils.data import Dataset
 import pandas as pd
 from datasets import load_dataset, load_metric, Image
-from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer, \
-    BeitForImageClassification, BeitFeatureExtractor
+from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer
 import torch
 from torch import nn
 from evaluate import load
 
 
-# model_name = "google/vit-base-patch16-224"
-# model_name = "google/vit-large-patch32-384"   # best until now
-model_name = 'microsoft/beit-base-patch16-224-pt22k-ft22k'
+model_name = "google/vit-large-patch32-384"
 
-feature_extractor = BeitFeatureExtractor.from_pretrained(model_name)
+feature_extractor = ViTFeatureExtractor.from_pretrained(model_name)
 
 
 def process_example(example):
@@ -45,7 +40,6 @@ def compute_metrics(p):
     y_pred = torch.tensor(p.predictions).sigmoid()
     y_true = torch.tensor(p.label_ids)
     accuracy = np.mean(((y_pred >= 0.5) == y_true.byte()).detach().numpy()).sum()
-    # return metric.compute(predictions=p.predictions, references=p.label_ids)
     return {'accuracy': round(accuracy, 4)}
 
 
@@ -65,7 +59,8 @@ def get_lab_mask(labels, content):
     return np.array(list({i: 1 if i in content.split(',') else 0 for i in labels}.values()))
 
 
-df = pd.read_csv('/home/a/DS/challenge/caproni.csv')
+# csv file contains: image paths, label and content columns
+df = pd.read_csv('./path_to_csv')
 
 labels = all_labels(df)
 df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labels, x))
@@ -85,16 +80,15 @@ num_labels = len(labels)
 id2label = {str(i): c for i, c in enumerate(labels)}
 label2id = {c: str(i) for i, c in enumerate(labels)}
 
-model = BeitForImageClassification.from_pretrained(model_name,
-                                                   problem_type="multi_label_classification",
-                                                   num_labels=num_labels,
-                                                   id2label=id2label,
-                                                   label2id=label2id,
-                                                   ignore_mismatched_sizes=True)
-
+model = ViTForImageClassification.from_pretrained(model_name,
+                                                  problem_type="multi_label_classification",
+                                                  num_labels=num_labels,
+                                                  id2label=id2label,
+                                                  label2id=label2id,
+                                                  ignore_mismatched_sizes=True)
 
 training_args = TrainingArguments(
-    output_dir="/home/a/results/beit",
+    output_dir="./results/vit32",
     per_device_train_batch_size=8,
     evaluation_strategy="epoch",
     num_train_epochs=10,
