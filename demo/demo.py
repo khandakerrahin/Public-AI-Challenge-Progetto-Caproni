@@ -3,7 +3,8 @@ import threading
 import tkinter as tk
 from tkinter import ttk
 
-from final_model import *
+from thematic_subdivision import *
+from metadata_extraction import *
 
 root = tk.Tk()
 root.title("model demo")
@@ -50,77 +51,57 @@ def choose_model(f):
     f.pack(fill='both', expand=True)
 
     start_classification = tk.Button(f, text='Classification', height=5, width=30,
-                                     command=lambda: existing_model(f))
+                                     command=lambda: classification(f))
     start_classification.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    start_segmentation = tk.Button(f, text='Damage Identification', height=5, width=30)
-    start_segmentation.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+    start_metadata = tk.Button(f, text='Metadata Extraction', height=5, width=30, command=lambda: metadata(f))
+    start_metadata.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
 
-    start_metadata = tk.Button(f, text='Metadata Extraction', height=5, width=30)
-    start_metadata.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+    start_segmentation = tk.Button(f, text='Damage Identification', height=5, width=30)
+    start_segmentation.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
 
     menu_button = tk.Button(f, text='Back', height=2, width=10, command=lambda: start_frame(root, f))
     menu_button.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
 
-def existing_model(f):
+def classification(f):
     f.pack_forget()
 
     new_f = tk.Frame(root, width=700, height=600)
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    label1 = tk.Label(new_f,
-                      text='Please, provide the path of the model',
-                      font=('Ubuntu Mono', 12))
-    label1.config(bg='white')
-    label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
-
-    input_text1 = tk.Text(new_f, height=2, width=60)
-    input_text1.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
-
-    label2 = tk.Label(new_f,
+    label = tk.Label(new_f,
                       text='Please, provide the path of the folder with images to classify',
                       font=('Ubuntu Mono', 12))
-    label2.config(bg='white')
-    label2.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+    label.config(bg='white')
+    label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
 
-    input_text2 = tk.Text(new_f, height=2, width=60)
-    input_text2.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+    input_text = tk.Text(new_f, height=2, width=60)
+    input_text.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
     b = tk.Button(new_f, text='Start', height=2, width=30,
-                  command=lambda: load_model(new_f, input_text2, input_text1))
+                  command=lambda: start_classification(new_f, input_text))
     b.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
     back_button = tk.Button(new_f, text='Back', height=2, width=10, command=lambda: choose_model(new_f))
     back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
-def load_model(f, text1, text2):
+def start_classification(f, text1):
     folder_to_classify = text1.get(1.0, "end-1c")
-    model_folder = text2.get(1.0, "end-1c")
-    model_exists = True
     folder_exists = True
 
     if not os.path.exists(folder_to_classify):
-        popup(f, "The path for label inference does not exist!")
+        popup(f, "The path for the images does not exist!")
         folder_exists = False
-    if not os.path.exists(model_folder):
-        popup(f, "The path for the model does not exist!")
-        model_exists = False
-    if os.path.exists(model_folder) and len(os.listdir(model_folder)) == 0:
-        popup(f, "The model folder is empty!")
-        model_exists = False
 
-    if model_exists and folder_exists:
-        model = Train(input_folder=None, output_folder=folder_to_classify, model_folder=model_folder)
+    if folder_exists:
+        model = Classify(input_folder=folder_to_classify)
 
-        start_classification(f, model)
-
-
-def start_classification(f, trainer):
-    pb = threading.Thread(target=start_progress_bar, args=(f, 'Starting Classification', trainer))
-    pb.start()
+        pb = threading.Thread(target=start_progress_bar,
+                          args=(f, 'Starting Classification', model, 'c'))
+        pb.start()
 
 
 def classification_done(f):
@@ -129,13 +110,88 @@ def classification_done(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    label2 = tk.Label(new_f, text='Classification done! \n press the button to close', font=('Ubuntu Mono', 18))
+    label2 = tk.Label(new_f, text='Classification done! \n '
+                                  'press Menu to go on the main page \n '
+                                  'press Close to exit.',
+                      font=('Ubuntu Mono', 18))
     label2.config(bg='white')
-    label2.pack(ipadx=10, ipady=30)
+    label2.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    b = tk.Button(new_f, text='Close', height=1, width=30,
-                  command=lambda: root.quit())
-    b.pack(ipadx=10, ipady=10, expand=True)
+    b1 = tk.Button(new_f, text='Menu', height=2, width=30, command=lambda: start_frame(root, new_f))
+    b1.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+
+    b2 = tk.Button(new_f, text="Close", height=2, width=30, command=lambda: root.quit())
+    b2.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
+
+
+def metadata(f):
+    f.pack_forget()
+
+    new_f = tk.Frame(root, width=700, height=600)
+    new_f.config(bg='white')
+    new_f.pack(fill='both', expand=True)
+
+    label1 = tk.Label(new_f,
+                      text='Please, provide the path of the folder with the images.',
+                      font=('Ubuntu Mono', 12))
+    label1.config(bg='white')
+    label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
+
+    input_text1 = tk.Text(new_f, height=2, width=60)
+    input_text1.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+
+    label2 = tk.Label(new_f,
+                      text='Please, provide the path where you want to save the results.',
+                      font=('Ubuntu Mono', 12))
+    label2.config(bg='white')
+    label2.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+    input_text2 = tk.Text(new_f, height=2, width=60)
+    input_text2.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+
+    b = tk.Button(new_f, text='Start', height=2, width=30,
+                  command=lambda: start_metadata_extraction(new_f, input_text1, input_text2))
+    b.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
+
+    back_button = tk.Button(new_f, text='Back', height=2, width=10, command=lambda: choose_model(new_f))
+    back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
+
+
+def start_metadata_extraction(f, text1, text2):
+
+    image_folder = text1.get(1.0, "end-1c")
+    output_folder = text2.get(1.0, "end-1c")
+    folder_exists = True
+
+    if not os.path.exists(image_folder):
+        popup(f, "The path for the images does not exist!")
+        folder_exists = False
+
+    if folder_exists:
+        ME = MetadataExtraction(image_folder, output_folder)
+        pb = threading.Thread(target=start_progress_bar,
+                              args=(f, 'Starting Metadata Extraction', ME, 'me'))
+        pb.start()
+
+
+def metadata_extraction_done(f):
+    f.pack_forget()
+    new_f = tk.Frame(root, width=700, height=600)
+    new_f.config(bg='white')
+    new_f.pack(fill='both', expand=True)
+
+    label2 = tk.Label(new_f, text='Metadata Extraction done! \n '
+                                  'press the menu button to go on the main page \n '
+                                  'press Close to exit.',
+                      font=('Ubuntu Mono', 18))
+    label2.config(bg='white')
+    label2.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
+
+    b1 = tk.Button(new_f, text='Menu', height=2, width=30, command=lambda: start_frame(root, new_f))
+    b1.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
+
+    b2 = tk.Button(new_f, text="Close", height=2, width=30, command=lambda: root.quit())
+    b2.place(relx=0.5, rely=0.8, anchor=tk.CENTER)
 
 
 def popup(f, text):
@@ -145,7 +201,7 @@ def popup(f, text):
 
     l = tk.Label(new_f, text=text, font=('Ubuntu Mono', 12))
     l.config(bg='gray')
-    l.pack( in_=new_f, anchor='w')
+    l.pack(in_=new_f, anchor='w')
 
     close_b = tk.Button(new_f, text='Close', command=lambda: new_f.place_forget())
     close_b.config(bg='white')
@@ -178,13 +234,13 @@ def get_info(f):
     info_title.config(bg='white')
     info_title.pack()
 
-    train_and_classification = tk.Button(f, text='Train & Classification',
-                                         command=lambda: info_popup(f, 'tc'))
-    train_and_classification.pack(ipadx=5, ipady=5, expand=True)
-
     classification = tk.Button(f, text='Classification',
                                command=lambda: info_popup(f, 'c'))
     classification.pack(ipadx=5, ipady=5, expand=True)
+
+    metadata_extraction = tk.Button(f, text='Metadata Extraction',
+                                         command=lambda: info_popup(f, 'tc'))
+    metadata_extraction.pack(ipadx=5, ipady=5, expand=True)
 
     menu_button = tk.Button(f, text='Back', command=lambda: start_frame(root, f))
     menu_button.pack(ipadx=5, ipady=5, expand=True)
@@ -197,7 +253,7 @@ def info_popup(f, text):
 
     if text == 'c':
         l1 = tk.Label(new_f,
-                      text="1. Provide the path for: unlabeled images, folder where the model is saved.\n",
+                      text="1. Provide the path for the images\n",
                       font=('Ubuntu Mono', 12), anchor='w')
         l2 = tk.Label(new_f,
                       text="At the end of the process, a new folder 'classification_result' inside the \n"
@@ -210,30 +266,24 @@ def info_popup(f, text):
         l2.pack()
     else:
         l1 = tk.Label(new_f,
-                      text="1. Create a folder with labeled images: it must contain a folder for each class.",
+                      text="1. Provide the path for the images\n",
                       font=('Ubuntu Mono', 12), anchor='w')
+
         l2 = tk.Label(new_f,
-                      text="    * suggested ~100 images per class                                              ",
-                      font=('Ubuntu Mono', 12), anchor='w')
-        l3 = tk.Label(new_f,
-                      text="2. provide the path for: labeled images, unlabeled images, folder where the model\n"
-                           "    will be saved.                                                                  \n\n"
-                           "At the end of the process, a new folder 'classification_result' inside the folder of\n"
-                           "unlabeled images will be created. It will contain the folders of classified images.\n",
+                      text="At the end of the process, a CSV file will be created. It will contain:            \n"
+                           "the path of the images, the subject, the content, and th description.              \n",
                       font=('Ubuntu Mono', 12), anchor='w')
         l1.config(bg='gray')
         l2.config(bg='gray')
-        l3.config(bg='gray')
         l1.pack()
         l2.pack()
-        l3.pack()
 
     close_b = tk.Button(new_f, text='Close', command=lambda: new_f.place_forget())
     close_b.config(bg='white')
     close_b.pack()
 
 
-def start_progress_bar(f, text, function):
+def start_progress_bar(f, text, function, task='c'):
     f.pack_forget()
 
     f = tk.Frame(root, width=700, height=600)
@@ -255,14 +305,20 @@ def start_progress_bar(f, text, function):
 
     pb.start()
 
-    t1 = threading.Thread(target=function.classify)
+    if task == 'c':
+        t1 = threading.Thread(target=function.classify)
+
+    elif task == 'me':
+        t1 = threading.Thread(target=function.get_metadata)
 
     t1.start()
     t1.join()
     pb.stop()
 
-    classification_done(f)
-
+    if task == 'c':
+        classification_done(f)
+    elif task == 'me':
+        metadata_extraction_done(f)
 
 start_frame(root)
 
