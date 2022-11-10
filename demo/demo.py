@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import threading
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog
 
 from thematic_subdivision import *
 from metadata_extraction import *
@@ -35,12 +35,12 @@ def start_frame(root, f=None):
     info_button = tk.Button(frame, text='Info', height=2, width=15, command=lambda: get_info(frame))
     info_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
-    hidden_frame = tk.Frame(frame, width=1, height=1)
-    hidden_frame.config(bg='white', highlightthickness=0, borderwidth=-1)
-    hidden_frame.place(in_=frame, anchor="n", relx=.55, rely=0.44)
-    eg_button = tk.Button(hidden_frame, command=lambda: popup_hippo(frame))
-    eg_button.config(bg='white', fg='white', highlightthickness=0, borderwidth=-1)
-    eg_button.pack()
+    # hidden_frame = tk.Frame(frame, width=1, height=1)
+    # hidden_frame.config(bg='white', highlightthickness=0, borderwidth=-1)
+    # hidden_frame.place(in_=frame, anchor="n", relx=.55, rely=0.44)
+    # eg_button = tk.Button(hidden_frame, command=lambda: popup_hippo(frame))
+    # eg_button.config(bg='white', fg='white', highlightthickness=0, borderwidth=-1)
+    # eg_button.pack()
 
 
 # select existing or new model
@@ -71,14 +71,13 @@ def classification(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    label = tk.Label(new_f,
-                      text='Please, provide the path of the folder with images to classify',
-                      font=('Ubuntu Mono', 12))
-    label.config(bg='white')
-    label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+    input_text = filedialog.askdirectory(initialdir="/", title="Choose the image folder")
 
-    input_text = tk.Text(new_f, height=2, width=60)
-    input_text.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+    label1 = tk.Label(new_f,
+                      text=f'Image folder selected: {input_text}',
+                      font=('Ubuntu Mono', 12))
+    label1.config(bg='white')
+    label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
     b = tk.Button(new_f, text='Start', height=2, width=30,
                   command=lambda: start_classification(new_f, input_text))
@@ -88,20 +87,12 @@ def classification(f):
     back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
-def start_classification(f, text1):
-    folder_to_classify = text1.get(1.0, "end-1c")
-    folder_exists = True
+def start_classification(f, folder_to_classify):
+    model = Classify(input_folder=folder_to_classify)
 
-    if not os.path.exists(folder_to_classify):
-        popup(f, "The path for the images does not exist!")
-        folder_exists = False
-
-    if folder_exists:
-        model = Classify(input_folder=folder_to_classify)
-
-        pb = threading.Thread(target=start_progress_bar,
-                          args=(f, 'Starting Classification', model, 'c'))
-        pb.start()
+    pb = threading.Thread(target=start_progress_bar,
+                      args=(f, 'Starting Classification', model, 'c'))
+    pb.start()
 
 
 def classification_done(f):
@@ -131,23 +122,20 @@ def metadata(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
+    input_text1 = filedialog.askdirectory(initialdir="/", title="Choose the image folder")
+    input_text2 = filedialog.askdirectory(initialdir="/", title="Choose the folder for the results")
+
     label1 = tk.Label(new_f,
-                      text='Please, provide the path of the folder with the images.',
+                      text=f'Image folder selected: {input_text1}',
                       font=('Ubuntu Mono', 12))
     label1.config(bg='white')
     label1.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
 
-    input_text1 = tk.Text(new_f, height=2, width=60)
-    input_text1.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
-
     label2 = tk.Label(new_f,
-                      text='Please, provide the path where you want to save the results.',
+                      text=f'Output folder selected: {input_text2}',
                       font=('Ubuntu Mono', 12))
     label2.config(bg='white')
     label2.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
-
-    input_text2 = tk.Text(new_f, height=2, width=60)
-    input_text2.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
 
     b = tk.Button(new_f, text='Start', height=2, width=30,
                   command=lambda: start_metadata_extraction(new_f, input_text1, input_text2))
@@ -157,21 +145,11 @@ def metadata(f):
     back_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
 
 
-def start_metadata_extraction(f, text1, text2):
-
-    image_folder = text1.get(1.0, "end-1c")
-    output_folder = text2.get(1.0, "end-1c")
-    folder_exists = True
-
-    if not os.path.exists(image_folder):
-        popup(f, "The path for the images does not exist!")
-        folder_exists = False
-
-    if folder_exists:
-        ME = MetadataExtraction(image_folder, output_folder)
-        pb = threading.Thread(target=start_progress_bar,
-                              args=(f, 'Starting Metadata Extraction', ME, 'me'))
-        pb.start()
+def start_metadata_extraction(f, image_folder, output_folder, task='s'):
+    ME = MetadataExtraction(image_folder, output_folder)
+    pb = threading.Thread(target=start_progress_bar,
+                          args=(f, 'Starting Metadata Extraction', ME, 'me'))
+    pb.start()
 
 
 def metadata_extraction_done(f):
@@ -180,7 +158,7 @@ def metadata_extraction_done(f):
     new_f.config(bg='white')
     new_f.pack(fill='both', expand=True)
 
-    label2 = tk.Label(new_f, text='Metadata Extraction done! \n '
+    label2 = tk.Label(new_f, text='Metadata Extraction done! \n\n '
                                   'press the menu button to go on the main page \n '
                                   'press Close to exit.',
                       font=('Ubuntu Mono', 18))
@@ -319,6 +297,7 @@ def start_progress_bar(f, text, function, task='c'):
         classification_done(f)
     elif task == 'me':
         metadata_extraction_done(f)
+
 
 start_frame(root)
 
