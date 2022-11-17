@@ -41,19 +41,26 @@ labels = list(df.loc[df.img_path.str.contains('test')].content_mask)
 
 
 #
-corr = 0
-n = 0
+corr = {k: {"correct": 0, "total": 0} for k in labs}
 for i, image in enumerate(tqdm(images)):
     y_true = torch.tensor(labels[i])
-    im = Image.open(image).convert("RGB").resize((224, 224))
+    im = Image.open(image).convert("RGB").resize((384, 384))
     encoding = feature_extractor([im], return_tensors='pt')
     output = model(**encoding)
     y_pred = output.logits.sigmoid()
     true_labels = [model.config.id2label[j] for j in np.where(y_true == 1)[0]]
     pred_labels = [model.config.id2label[j] for j in np.where(y_pred[0] >= 0.5)[0]]
-    if np.sum(((y_pred >= 0.5) == y_true).numpy()) == len(labs):
-        corr += 1
     if len(pred_labels) == 0:
         pred_labels = [model.config.id2label[y_pred.argmax(-1).item()]]
+    # if np.sum(((y_pred >= 0.5) == y_true).numpy()) == len(labs):
+    #     corr += 1
+    for pred in pred_labels:
+        if pred in true_labels:
+            corr[pred]['correct'] += 1
+        corr[pred]['total'] += 1
 
-print(f"accuracy: {round(corr/len(images), 4)}")
+
+# print(f"accuracy: {round(corr/len(images), 4)}")
+for k in corr:
+    if corr[k]['total'] != 0:
+        print(f"accuracy for label {k}: {corr[k]['correct'] / corr[k]['total']}")
