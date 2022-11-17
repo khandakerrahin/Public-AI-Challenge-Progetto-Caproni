@@ -1,16 +1,15 @@
 import datasets
 import numpy as np
 import pandas as pd
-from datasets import load_dataset, load_metric, Image
-from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer
+from datasets import Image
+from transformers import ViTFeatureExtractor, ViTForImageClassification, TrainingArguments, Trainer, \
+    AutoFeatureExtractor, SwinForImageClassification
 import torch
-from torch import nn
 from evaluate import load
 
+model_name = "microsoft/swin-large-patch4-window7-224"
 
-model_name = "google/vit-large-patch32-384"
-
-feature_extractor = ViTFeatureExtractor.from_pretrained(model_name)
+feature_extractor = AutoFeatureExtractor.from_pretrained(model_name, do_resize=True, size=224)
 
 
 def process_example(example):
@@ -61,7 +60,6 @@ def get_lab_mask(labels, content):
 
 # csv file contains: image paths, label and content columns
 df = pd.read_csv('./path_to_csv')
-
 labels = all_labels(df)
 df['content_mask'] = df.content.apply(lambda x: get_lab_mask(labels, x))
 
@@ -71,21 +69,19 @@ for task in ["train", "validation"]:
     diz[task] = datasets.Dataset.from_dict(
         {"image": ddf.img_path, "label": ddf.content_mask}).cast_column("image", Image())
 
-
 dataset = datasets.DatasetDict(diz)
 dataset = dataset.with_transform(transform)
-
 
 num_labels = len(labels)
 id2label = {str(i): c for i, c in enumerate(labels)}
 label2id = {c: str(i) for i, c in enumerate(labels)}
 
-model = ViTForImageClassification.from_pretrained(model_name,
-                                                  problem_type="multi_label_classification",
-                                                  num_labels=num_labels,
-                                                  id2label=id2label,
-                                                  label2id=label2id,
-                                                  ignore_mismatched_sizes=True)
+model = SwinForImageClassification.from_pretrained(model_name,
+                                                   problem_type="multi_label_classification",
+                                                   num_labels=num_labels,
+                                                   id2label=id2label,
+                                                   label2id=label2id,
+                                                   ignore_mismatched_sizes=True)
 
 training_args = TrainingArguments(
     output_dir="./results/vit32",
@@ -103,8 +99,8 @@ training_args = TrainingArguments(
     remove_unused_columns=False,
     push_to_hub=False,
     load_best_model_at_end=True,
+    report_to="none"
 )
-
 
 trainer = Trainer(
     model=model,
@@ -129,6 +125,4 @@ metrics = trainer.evaluate(dataset['validation'])
 trainer.log_metrics("eval", metrics)
 trainer.save_metrics("eval", metrics)
 
-
 # # to get the metrics call trainer.state.log_history
-

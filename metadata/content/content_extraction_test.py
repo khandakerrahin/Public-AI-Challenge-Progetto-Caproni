@@ -1,19 +1,16 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import random
-
 import torch
 from tqdm import tqdm
-from transformers import ViTFeatureExtractor, ViTForImageClassification
-from glob import glob
+from transformers import ViTFeatureExtractor, ViTForImageClassification, \
+    AutoFeatureExtractor, SwinForImageClassification
 from PIL import Image
-import torch.nn as nn
-from torch.nn.functional import sigmoid
 
-model_path = './results/vit32/checkpoint-n'     # n is the checkpoint number
-feature_extractor = ViTFeatureExtractor.from_pretrained(model_path, do_resize=False)
-model = ViTForImageClassification.from_pretrained(model_path)
+
+model_path = './results/checkpoint-n'     # n is the checkpoint number
+feature_extractor = AutoFeatureExtractor.from_pretrained(model_path, do_resize=False)
+model = SwinForImageClassification.from_pretrained(model_path)
 
 
 def all_labels(df):
