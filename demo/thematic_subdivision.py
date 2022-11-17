@@ -13,13 +13,14 @@ from tqdm import tqdm
 class Classify:
     def __init__(self, input_folder, task='thematic_subdivision'):
         self.input_folder = input_folder
+        self.task = task
         if task == "thematic_subdivision":
             self.model_folder = "./checkpoints/classification_checkpoint"
         elif task == "damage_assessment":
             self.model_folder = "./checkpoints/damage_checkpoint"
 
     def classify(self):
-        output_dir = os.path.join(self.input_folder, "classification_result")
+        output_dir = os.path.join(self.input_folder, f"{self.task}_result")
 
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir, ignore_errors=False, onerror=None)
