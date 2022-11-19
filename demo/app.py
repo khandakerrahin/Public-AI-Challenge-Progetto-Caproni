@@ -3,7 +3,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk, filedialog
 
-from thematic_subdivision import *
+from classification import *
 from metadata_extraction import *
 
 width = 1200
@@ -275,7 +275,8 @@ def info_popup(f, text):
 
         l2 = tk.Label(new_f,
                       text="At the end of the process, a CSV file will be created. It will contain:            \n"
-                           "the path of the images, the subject, the content, and th description.              \n",
+                           "the path of the images, the subject, the content, the description, and the damege  "
+                           "level.                                                                             \n",
                       font=('Ubuntu Mono', 12), anchor='w')
         l1.config(bg='gray')
         l2.config(bg='gray')
@@ -287,12 +288,17 @@ def info_popup(f, text):
     close_b.pack()
 
 
-def start_progress_bar(f, text, function, task='thematic_subdivision'):
+def start_progress_bar(f, text, function, task='thematic_subdivision', text2=None):
     f = new_frame(f)
 
-    l = tk.Label(f, text=text, font=("Ubuntu Mono", 18, 'bold'))
+    l = tk.Label(f, text=text, font=("Ubuntu Mono", 20, 'bold'))
     l.config(bg='white')
     l.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+
+    if text2:
+        l1 = tk.Label(f, text=text2, font=("Ubuntu Mono", 18, 'bold'))
+        l1.config(bg='white')
+        l1.place(relx=0.5, rely=0.45, anchor=tk.CENTER)
 
     pb = ttk.Progressbar(
         f,
@@ -301,23 +307,53 @@ def start_progress_bar(f, text, function, task='thematic_subdivision'):
         length=450
     )
     # place the progressbar
-    pb.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+    pb.place(relx=0.5, rely=0.55, anchor=tk.CENTER)
 
     pb.start()
 
     if task == 'thematic_subdivision' or task == 'damage_assessment':
         t1 = threading.Thread(target=function.classify)
+        t1.start()
+        t1.join()
+        pb.stop()
+        task_done(f, task)
 
     elif task == 'metadata_extraction':
-        t1 = threading.Thread(target=function.get_metadata)
+        # t1 = threading.Thread(target=function.get_metadata)
+        start_progress_bar(f, "Working on metadata extraction", function, task='s',
+                           text2="1. Subject extraction              ")
+
+    elif task == "s":
+        t1 = threading.Thread(target=function.get_subject)
+        t1.start()
+        t1.join()
+        pb.stop()
+        start_progress_bar(f, "Working on metadata extraction", function, task='c',
+                           text2="2. Content extraction              ")
+    elif task == "c":
+        t1 = threading.Thread(target=function.get_content)
+        t1.start()
+        t1.join()
+        pb.stop()
+        start_progress_bar(f, "Working on metadata extraction", function, task='d',
+                           text2="3. Description                     ")
+    elif task == "d":
+        t1 = threading.Thread(target=function.get_description)
+        t1.start()
+        t1.join()
+        pb.stop()
+        start_progress_bar(f, "Working on metadata extraction", function, task='dmg',
+                           text2="4. Damage assessment               ")
+    elif task == 'dmg':
+        t1 = threading.Thread(target=function.get_damage)
+        t1.start()
+        t1.join()
+        pb.stop()
+        task_done(f, "metadata_extraction")
+
     else:
         t1 = None
         raise ValueError("task not implemented")
-
-    t1.start()
-    t1.join()
-    pb.stop()
-    task_done(f, task)
 
 
 start_frame(root)
