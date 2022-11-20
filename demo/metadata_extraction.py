@@ -10,16 +10,19 @@ from torchvision import transforms
 import numpy as np
 from tqdm import tqdm
 
+from util import application_path
+
 
 class MetadataExtraction:
     def __init__(self, input_folder, output_folder):
+        curr_dir = application_path
         self.images_path = sorted(glob(os.path.join(input_folder, "*.jpg")))
         self.images = [Image.open(im).convert("RGB").resize((224, 224)) for im in self.images_path]
         self.output_folder = os.path.join(output_folder, "metadata_results.csv")
-        self.classification_model = os.path.join(".", "checkpoints", "classification_checkpoint")
-        self.content_model = os.path.join(".", "checkpoints", "content_checkpoint")
-        self.caption_model = os.path.join(".", "checkpoints", "caption_checkpoint")
-        self.damage_model = os.path.join(".", "checkpoints", "damage_checkpoint")
+        self.classification_model = os.path.join(curr_dir, "checkpoints", "classification_checkpoint")
+        self.content_model = os.path.join(curr_dir, "checkpoints", "content_checkpoint")
+        self.caption_model = os.path.join(curr_dir, "checkpoints", "caption_checkpoint")
+        self.damage_model = os.path.join(curr_dir, "checkpoints", "damage_checkpoint")
         self.output = {"image_path": self.images_path}
 
     def get_subject(self):

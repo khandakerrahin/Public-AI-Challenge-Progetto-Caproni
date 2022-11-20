@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Demo
+Version=v0.8.5
+# replace the paths for demo folder
+Icon=/demo/imgs/hippo.png
+X-Icon-Path=/demo/imgs/hippo.png
+Exec=/demo/app.py
+Terminal=false
+Type=Application

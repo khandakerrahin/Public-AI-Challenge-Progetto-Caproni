@@ -1,9 +1,10 @@
-# Demo
+# App
 
 ### Basic GUI for thematic subdivision, metadata extraction, and damage assessment using tkinter.
 ###
+![alt text](./imgs/start.png)
 
-####
+###
 For all the processes, select the input folder that contains all the images
 1. In the thematic subdivision processes, a new folder "thematic_subdivision_result",  inside the folder of the input images will be created. 
 It will contain the folders of classified images.
@@ -24,5 +25,23 @@ It will contain the folders of classified images.
 ##
 
 
-![alt text](./imgs/start.png)
 ![alt text](./imgs/tasks.png)
+
+###
+
+To install the requirements run
+      
+      pip install -r requirements.txt
+
+To install OFA transformer model and checkpoint refer to
+      
+      https://huggingface.co/OFA-Sys/ofa-large
+      
+
+To make an Ubuntu application
+   * edit the folder path in demo_app.desktop
+
+   * Then run in the terminal
+
+
+      cp /path_to_folder/demo_app.desktop /usr/share/applications/demo_app.desktop

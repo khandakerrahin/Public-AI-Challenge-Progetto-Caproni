@@ -6,17 +6,18 @@ from transformers import ViTFeatureExtractor, ViTForImageClassification, AutoFea
     SwinForImageClassification
 from tqdm import tqdm
 
+from util import application_path
 
 class Classify:
     def __init__(self, input_folder, task='thematic_subdivision'):
         self.input_folder = input_folder
         self.task = task
         if task == "thematic_subdivision":
-            model_folder = os.path.join(".", "checkpoints", "classification_checkpoint")
+            model_folder = os.path.join(application_path, "checkpoints", "classification_checkpoint")
             self.feature_extractor = ViTFeatureExtractor.from_pretrained(model_folder)
             self.model = ViTForImageClassification.from_pretrained(model_folder)
         elif task == "damage_assessment":
-            model_folder = os.path.join(".", "checkpoints", "damage_checkpoint")
+            model_folder = os.path.join(application_path, "checkpoints", "damage_checkpoint")
             self.feature_extractor = AutoFeatureExtractor.from_pretrained(model_folder)
             self.model = SwinForImageClassification.from_pretrained(model_folder)
 
@@ -47,4 +48,4 @@ class Classify:
         for k in out:
             images = out[k]
             dest = os.path.join(output_dir, k)
-            c = [shutil.copy(im, os.path.join(dest, im.split('/')[-1])) for im in images]
+            c = [shutil.copy(im, os.path.join(dest, im.split('/')[-1].split('\\')[-1])) for im in images]

@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.10
 import os
+import sys
 import threading
 import tkinter as tk
 from tkinter import ttk, filedialog
@@ -8,6 +9,8 @@ from os.path import expanduser
 
 from classification import *
 from metadata_extraction import *
+from util import application_path
+
 
 home_dir = expanduser("~")
 
@@ -26,8 +29,7 @@ def start_frame(root, f=None):
 
     frame = customtkinter.CTkFrame(root)
     frame.pack(fill='both', expand=True)
-
-    picture = tk.PhotoImage(file=os.path.join(".", "imgs", "airplane.png"))
+    picture = tk.PhotoImage(file=os.path.join(application_path, "imgs", "airplane.png"))
     label = customtkinter.CTkLabel(frame, text='Welcome!', text_font=('Ubuntu Mono', 30),
                                    image=picture, compound='bottom')
     label.image = picture
@@ -188,7 +190,7 @@ def popup(f, text):
 def popup_hippo(f):
     f = new_frame(f)
 
-    picture = tk.PhotoImage(file=os.path.join(".", "imgs", "hippo.png")).subsample(3, 3)
+    picture = tk.PhotoImage(file=os.path.join(application_path, "imgs", "hippo.png")).subsample(3, 3)
     label = customtkinter.CTkLabel(f, text='Welcome!', text_font=('Ubuntu Mono', 30, 'bold'),
                                    image=picture, compound='bottom')
     label.image = picture
