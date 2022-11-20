@@ -6,12 +6,10 @@ from tkinter import ttk, filedialog
 from classification import *
 from metadata_extraction import *
 
-width = 1200
-height = 800
 
 root = tk.Tk()
 root.title("model demo")
-root.geometry('1200x800')
+root.geometry('1024x768')
 root.config(bg='white')
 
 
@@ -21,7 +19,7 @@ def start_frame(root, f=None):
     if f is not None:
         f.pack_forget()
 
-    frame = tk.Frame(root, width=width, height=height)
+    frame = tk.Frame(root)
     frame.config(bg='white')
     frame.pack(fill='both', expand=True)
 
@@ -48,7 +46,7 @@ def start_frame(root, f=None):
 
 def new_frame(f):
     f.pack_forget()
-    f = tk.Frame(root, width=width, height=height)
+    f = tk.Frame(root)
     f.config(bg='white')
     f.pack(fill='both', expand=True)
     return f
@@ -349,6 +347,7 @@ def start_progress_bar(f, text, function, task='thematic_subdivision', text2=Non
         t1.start()
         t1.join()
         pb.stop()
+        function.get_metadata()
         task_done(f, "metadata_extraction")
 
     else:

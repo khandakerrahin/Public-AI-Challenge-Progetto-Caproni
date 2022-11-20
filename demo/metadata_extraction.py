@@ -4,8 +4,10 @@ import pandas as pd
 import torch.cuda
 from PIL import Image
 from transformers import ViTFeatureExtractor, ViTForImageClassification, \
-    AutoFeatureExtractor, SwinForImageClassification, AutoTokenizer, VisionEncoderDecoderModel,\
-    ViltProcessor, ViltForQuestionAnswering
+    AutoFeatureExtractor, SwinForImageClassification, AutoTokenizer, VisionEncoderDecoderModel
+from transformers import OFATokenizer, OFAModel
+# from generate import sequence_generator
+from torchvision import transforms
 import numpy as np
 from tqdm import tqdm
 
@@ -17,7 +19,7 @@ class MetadataExtraction:
         self.output_folder = os.path.join(output_folder, "metadata_results.csv")
         self.classification_model = "./checkpoints/classification_checkpoint"
         self.content_model = "./checkpoints/content_checkpoint"
-        self.caption_model = "nlpconnect/vit-gpt2-image-captioning"
+        self.caption_model = "./checkpoints/caption_checkpoint"
         self.damage_model = "./checkpoints/damage_checkpoint"
         self.output = {"image_path": self.images_path}
 
@@ -51,17 +53,23 @@ class MetadataExtraction:
         self.output['content'] = contents
 
     def get_description(self):
-        model = VisionEncoderDecoderModel.from_pretrained(self.caption_model)
-        feature_extractor = ViTFeatureExtractor.from_pretrained(self.caption_model)
-        tokenizer = AutoTokenizer.from_pretrained(self.caption_model)
-        gen_kwargs = {"max_length": 20, "num_beams": 4}
+        model = OFAModel.from_pretrained(self.caption_model, use_cache=False)
+        tokenizer = OFATokenizer.from_pretrained(self.caption_model)
+        patch_resize_transform = transforms.Compose([
+            lambda x: x.convert("RGB"),
+            transforms.Resize((480, 480), interpolation=Image.BICUBIC),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+        ])
+        q = 'what does the image describe?'
+
         captions = []
         for i, image in enumerate(tqdm(self.images)):
-            im = feature_extractor(image, return_tensors='pt').pixel_values
-            output_ids = model.generate(im, **gen_kwargs)
-            pred = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
-            captions += [p.strip() for p in pred]
-        # return captions
+            inputs = tokenizer([q], return_tensors='pt').input_ids
+            img = patch_resize_transform(image).unsqueeze(0)
+            gen = model.generate(inputs, patch_images=img, num_beams=5, no_repeat_ngram_size=3)
+            caption = tokenizer.batch_decode(gen, skip_special_tokens=True)[0]
+            captions.append(caption)
         self.output['description'] = captions
 
     def get_damage(self):
