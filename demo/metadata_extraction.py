@@ -16,7 +16,7 @@ class MetadataExtraction:
         self.images_path = sorted(glob(os.path.join(input_folder, "*.jpg")))
         self.images = [Image.open(im).convert("RGB").resize((224, 224)) for im in self.images_path]
         self.output_folder = os.path.join(output_folder, "metadata_results.csv")
-        self.classification_model = os.path.join(".", "checkpoint", "classification_checkpoint")
+        self.classification_model = os.path.join(".", "checkpoints", "classification_checkpoint")
         self.content_model = os.path.join(".", "checkpoints", "content_checkpoint")
         self.caption_model = os.path.join(".", "checkpoints", "caption_checkpoint")
         self.damage_model = os.path.join(".", "checkpoints", "damage_checkpoint")

@@ -27,7 +27,7 @@ def start_frame(root, f=None):
     frame = customtkinter.CTkFrame(root)
     frame.pack(fill='both', expand=True)
 
-    picture = tk.PhotoImage(file=os.path.join(".", "imgs", "airplane2.png"))
+    picture = tk.PhotoImage(file=os.path.join(".", "imgs", "airplane.png"))
     label = customtkinter.CTkLabel(frame, text='Welcome!', text_font=('Ubuntu Mono', 30),
                                    image=picture, compound='bottom')
     label.image = picture
@@ -188,7 +188,7 @@ def popup(f, text):
 def popup_hippo(f):
     f = new_frame(f)
 
-    picture = tk.PhotoImage(file=os.path.join(".", "imgs", "hippo2.png")).subsample(3, 3)
+    picture = tk.PhotoImage(file=os.path.join(".", "imgs", "hippo.png")).subsample(3, 3)
     label = customtkinter.CTkLabel(f, text='Welcome!', text_font=('Ubuntu Mono', 30, 'bold'),
                                    image=picture, compound='bottom')
     label.image = picture

@@ -24,4 +24,5 @@ It will contain the folders of classified images.
 ##
 
 
-![alt text](./imgs/start_window.png)
+![alt text](./imgs/start.png)
+![alt text](./imgs/tasks.png)
