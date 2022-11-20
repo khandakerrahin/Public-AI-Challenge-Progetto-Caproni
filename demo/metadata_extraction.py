@@ -4,9 +4,8 @@ import pandas as pd
 import torch.cuda
 from PIL import Image
 from transformers import ViTFeatureExtractor, ViTForImageClassification, \
-    AutoFeatureExtractor, SwinForImageClassification, AutoTokenizer, VisionEncoderDecoderModel
+    AutoFeatureExtractor, SwinForImageClassification
 from transformers import OFATokenizer, OFAModel
-# from generate import sequence_generator
 from torchvision import transforms
 import numpy as np
 from tqdm import tqdm
@@ -17,10 +16,10 @@ class MetadataExtraction:
         self.images_path = sorted(glob(os.path.join(input_folder, "*.jpg")))
         self.images = [Image.open(im).convert("RGB").resize((224, 224)) for im in self.images_path]
         self.output_folder = os.path.join(output_folder, "metadata_results.csv")
-        self.classification_model = "./checkpoints/classification_checkpoint"
-        self.content_model = "./checkpoints/content_checkpoint"
-        self.caption_model = "./checkpoints/caption_checkpoint"
-        self.damage_model = "./checkpoints/damage_checkpoint"
+        self.classification_model = os.path.join(".", "checkpoint", "classification_checkpoint")
+        self.content_model = os.path.join(".", "checkpoints", "content_checkpoint")
+        self.caption_model = os.path.join(".", "checkpoints", "caption_checkpoint")
+        self.damage_model = os.path.join(".", "checkpoints", "damage_checkpoint")
         self.output = {"image_path": self.images_path}
 
     def get_subject(self):
@@ -86,10 +85,6 @@ class MetadataExtraction:
         self.output['damage'] = damage_types
 
     def get_metadata(self):
-        # self.output['subject'] = self.get_subject()
-        # self.output['content'] = self.get_content()
-        # self.output['description'] = self.get_description()
-        # self.output['damage'] = self.get_damage()
         data = pd.DataFrame(self.output)
         data.to_csv(self.output_folder, index=False)
 

@@ -2,12 +2,8 @@ import os
 import shutil
 from glob import glob
 from PIL import Image
-import datasets
-from datasets import load_dataset, load_metric
 from transformers import ViTFeatureExtractor, ViTForImageClassification, AutoFeatureExtractor, \
     SwinForImageClassification
-import torch
-import numpy as np
 from tqdm import tqdm
 
 
@@ -16,12 +12,13 @@ class Classify:
         self.input_folder = input_folder
         self.task = task
         if task == "thematic_subdivision":
-            # self.model_folder =
-            self.feature_extractor = ViTFeatureExtractor.from_pretrained("./checkpoints/classification_checkpoint")
-            self.model = ViTForImageClassification.from_pretrained("./checkpoints/classification_checkpoint")
+            model_folder = os.path.join(".", "checkpoints", "classification_checkpoint")
+            self.feature_extractor = ViTFeatureExtractor.from_pretrained(model_folder)
+            self.model = ViTForImageClassification.from_pretrained(model_folder)
         elif task == "damage_assessment":
-            self.feature_extractor = AutoFeatureExtractor.from_pretrained("./checkpoints/damage_checkpoint")
-            self.model = SwinForImageClassification.from_pretrained("./checkpoints/damage_checkpoint")
+            model_folder = os.path.join(".", "checkpoints", "damage_checkpoint")
+            self.feature_extractor = AutoFeatureExtractor.from_pretrained(model_folder)
+            self.model = SwinForImageClassification.from_pretrained(model_folder)
 
     def classify(self):
         output_dir = os.path.join(self.input_folder, f"{self.task}_result")
