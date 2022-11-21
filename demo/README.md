@@ -48,4 +48,4 @@ To make an Ubuntu application
    * Then run in the terminal
 
 
-      cp /path_to_folder/demo_app.desktop /usr/share/applications/demo_app.desktop
+      sudo cp /path_to_folder/demo_app.desktop /usr/share/applications/demo_app.desktop
