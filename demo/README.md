@@ -33,9 +33,13 @@ To install the requirements run
       
       pip install -r requirements.txt
 
-To install OFA transformer model and checkpoint refer to
+To install OFA transformer model and download the checkpoint refer to
       
       https://huggingface.co/OFA-Sys/ofa-large
+
+The other checkpoints are available here
+
+      https://drive.google.com/drive/folders/1gtqUgeDxxEeMTkBRgL-2rIbkJRL11VAW?usp=sharing
       
 
 To make an Ubuntu application
