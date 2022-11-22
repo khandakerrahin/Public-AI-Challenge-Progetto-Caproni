@@ -1,0 +1,28 @@
+@misc{https://doi.org/10.48550/arxiv.2010.11929,
+  doi = {10.48550/ARXIV.2010.11929},
+  url = {https://arxiv.org/abs/2010.11929},
+  author = {Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and Uszkoreit, Jakob and Houlsby, Neil},
+  title = {An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+  publisher = {arXiv},
+  year = {2020},
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+
+@misc{https://doi.org/10.48550/arxiv.2103.14030,
+  doi = {10.48550/ARXIV.2103.14030},
+  url = {https://arxiv.org/abs/2103.14030},
+  author = {Liu, Ze and Lin, Yutong and Cao, Yue and Hu, Han and Wei, Yixuan and Zhang, Zheng and Lin, Stephen and Guo, Baining},
+  title = {Swin Transformer: Hierarchical Vision Transformer using Shifted Windows},
+  publisher = {arXiv},
+  year = {2021},
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+
+
+@article{wang2022OFA,
+  title={Unifying Architectures, Tasks, and Modalities Through a Simple Sequence-to-Sequence Learning Framework},
+  author={Wang, Peng and Yang, An and Men, Rui and Lin, Junyang and Bai, Shuai and Li, Zhikang and Ma, Jianxin and Zhou, Chang and Zhou, Jingren and Yang, Hongxia},
+  journal={arXiv preprint arXiv:2202.03052},
+  year={2022}
+}
