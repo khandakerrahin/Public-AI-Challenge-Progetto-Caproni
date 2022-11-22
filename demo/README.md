@@ -44,8 +44,14 @@ The other checkpoints are available here
 
 To make an Ubuntu application
    * edit the folder path in demo_app.desktop
+   * create a new folder inside /path_to_folder/ called "checkpoints"
+   * extract the checkpoints inside /path_to_folder/checkpoints
+   * add OFA-large folder inside /path_to_folder/checkpoints and rename it as "caption_checkpoint"
 
-   * Then run in the terminal
-
-
-      cp /path_to_folder/demo_app.desktop /usr/share/applications/demo_app.desktop
+   * run in the terminal
+        
+            chmod u+x /path_to_folder/demo_app.desktop
+        
+            sudo cp /path_to_folder/demo_app.desktop /usr/share/applications/demo_app.desktop
+      
+   * Now you can find this application among the others
